@@ -1,11 +1,26 @@
 import pickle
 import json
 import sys
+import numpy as np
+
+def convert_ndarray(obj):
+    # Recursively convert ndarrays to lists
+    if isinstance(obj, np.ndarray):
+        return obj.tolist()
+    elif isinstance(obj, dict):
+        return {k: convert_ndarray(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [convert_ndarray(i) for i in obj]
+    else:
+        return obj
 
 def pkl_to_json(pkl_file, json_file):
     # Load data from the pickle file
     with open(pkl_file, 'rb') as f:
         data = pickle.load(f)
+    
+    # Convert any ndarrays to lists
+    data = convert_ndarray(data)
     
     # Save data to a JSON file
     with open(json_file, 'w') as f:

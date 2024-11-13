@@ -29,7 +29,7 @@ The resulting dataset consists of 116 antibody-antigen structures. Each complex 
 
 # Model generation
 
-We run Alphafold 2.3.0.
+We run Alphafold 2.3.2.
 
 ### MSA generation
 
@@ -37,7 +37,9 @@ We run the default Alphafold pipeline for MSA generation. Out of the 116 complex
 
 ### Model generation
 
+#### AF default
 
+We run 40 predictions per model with the AlphaFold 2 standard parameters, resulting in 40x5=200 models.
 
 # References
 

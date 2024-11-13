@@ -3,3 +3,7 @@
 
 # 
 /data/MSAs
+/data/models
+
+# Debgugging
+/logs
