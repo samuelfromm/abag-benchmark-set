@@ -1,14 +1,23 @@
 #!/bin/bash
 
-# Configuration variables
+# Check if BASEDIR argument is provided
+if [ -z "$1" ]; then
+    echo "Usage: $0 <BASEDIR>"
+    exit 1
+fi
+
+# Set BASEDIR from the command-line argument
+BASEDIR="$1"
+
+# Set the default values for the variables
 RUNNAME="default"
 NUMPREDICTIONS=40
 WEIGHT_VERSION="multimer_v3"
-DB_FILE="/proj/elofssonlab/users/x_safro/git/abag-benchmark-set/data/db/lightDb.txt"
-MODELDIR="/proj/elofssonlab/users/x_safro/git/abag-benchmark-set/data/models_test"
+DB_FILE="$BASEDIR/abag-benchmark-set/data/db/lightDb.txt"
+MODELDIR="$BASEDIR/abag-benchmark-set/data/models_test"
 
 OUTPUT_FILE="./samples.csv"
-FILTERED_PDB_DIR="/proj/elofssonlab/users/x_safro/git/abag-benchmark-set/data/db/structures_filtered"
+FILTERED_PDB_DIR="$BASEDIR/abag-benchmark-set/data/db/structures_filtered"
 
 # Templates for paths
 PDB_TEMPLATE="$MODELDIR/$RUNNAME/{ID}complex/unrelaxed_model_{MODEL_NUM}_${WEIGHT_VERSION}_pred_{PRED_NUM}_${RUNNAME}.pdb"

@@ -5,7 +5,7 @@ samples_csv: "input/samples.csv"
 
 
 # Programs
-mmalign_path: "/proj/elofssonlab/users/x_safro/programs/MMalign"
+mmalign_path: "/home/sfromm/programs/MMalign/MMalign" #"/proj/elofssonlab/users/x_safro/programs/MMalign"
 
 
 # Environments to use

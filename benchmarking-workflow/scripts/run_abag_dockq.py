@@ -18,8 +18,7 @@ def merge_chains(model, chains_to_merge, new_chain_name=None):
 
 sample_id = snakemake.wildcards.sample_id
 
-
-input_samples_df = pd.read_csv(snakemake.wildcards.input_samples_csv, index_col="sample_id", na_values=[], keep_default_na=False)
+input_samples_df = pd.read_csv(snakemake.input[0], index_col="sample_id", na_values=[], keep_default_na=False)
 
 Hchain = input_samples_df.at[sample_id, "Hchain"]
 Achain = input_samples_df.at[sample_id, "Achain"]
@@ -31,18 +30,20 @@ abchains = [Hchain]
 if Lchain != "NA":
     abchains.append(Lchain)
 
+print("Ag chains: ", agchains)
+print("Ab chains: ", abchains)
 
 # Load the model and native structures
 model = DockQ.DockQ.load_PDB(snakemake.input.query_cut)
 native = DockQ.DockQ.load_PDB(snakemake.input.reference_cut)
 
-# merge chains
-if len(agchains) > 1:
-    model = merge_chains(model, agchains,"Ag")
-    native = merge_chains(native, agchains, "Ag")
-if len(abchains) > 1:
-    model = merge_chains(model, abchains, "Ab")
-    native = merge_chains(native, abchains, "Ab")
+# merge chains and rename chains
+
+model = merge_chains(model, agchains,"Ag")
+native = merge_chains(native, agchains, "Ag")
+
+model = merge_chains(model, abchains, "Ab")
+native = merge_chains(native, abchains, "Ab")
 
 
 # native:model chain map dictionary for two interfaces

@@ -10,7 +10,7 @@
 import csv
 import pandas as pd
 
-configfile: "config/config.yaml"
+#configfile: "config/config_server.yaml"
 
 output_dir = config["output_dir"]
 samples_csv = config["samples_csv"]
@@ -126,9 +126,9 @@ rule run_dockq:
 # Define the rule to run ANTIBODY-ANTIGEN DockQ
 rule run_abag_dockq:
     input:
+        samples_csv,
         reference_cut=output_dir+"/{sample_id}/{sample_id}_cut_reference.pdb",
         query_cut=output_dir+"/{sample_id}/{sample_id}_cut_query.pdb",
-        input_samples_csv=samples_csv,
     output:
         temp(output_dir+"/{sample_id}/{sample_id}_abag_dockq.csv"),
     conda:
