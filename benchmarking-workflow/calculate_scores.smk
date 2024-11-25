@@ -1,16 +1,15 @@
 
 '''
-#### Workflow ####
-1) Run MMalign to get an alignment of the chains between the two structures
-2) Use the chain alignment to compute 
 
-####
+snakemake -s calculate_scores.smk --use-conda --configfile config/config_prebuilt.yaml 
+
+NOTE: We run shell scripts instead of python scripts directly due to an issue with conda and snakemake
+(see https://stackoverflow.com/questions/74479965/snakemake-doesnt-activate-conda-environment-correctly)
+This does not happen on all systems that I tried but I was unable to locate the issue.
 '''
 
 import csv
 import pandas as pd
-
-#configfile: "config/config_server.yaml"
 
 output_dir = config["output_dir"]
 samples_csv = config["samples_csv"]
@@ -77,8 +76,17 @@ rule run_align_and_cut:
         query_cut=output_dir+"/{sample_id}/{sample_id}_cut_query.pdb",
     conda:
         config["run_align_and_cut_env"]
-    script:
-        "scripts/run_align_and_cut.py"
+    shell:
+        """
+        python scripts/run_align_and_cut.py \
+            --alignment {input.alignment} \
+            --reference_pdb {input.reference_pdb} \
+            --query_pdb {input.query_pdb} \
+            --sample_id {wildcards.sample_id} \
+            --reference_cut {output.reference_cut} \
+            --query_cut {output.query_cut} \
+            --output {output[0]}
+        """
 
 
 
@@ -120,8 +128,16 @@ rule run_dockq:
         temp(output_dir+"/{sample_id}/{sample_id}_dockq.csv"),
     conda:
         config["run_dockq_env"]
-    script:
-        "scripts/run_dockq.py"
+    shell:
+        """
+        python scripts/run_dockq.py \
+            --alignment {input.alignment} \
+            --query_cut {input.query_cut} \
+            --reference_cut {input.reference_cut} \
+            --sample_id {wildcards.sample_id} \
+            --output {output[0]}
+        """
+
 
 # Define the rule to run ANTIBODY-ANTIGEN DockQ
 rule run_abag_dockq:
@@ -133,8 +149,15 @@ rule run_abag_dockq:
         temp(output_dir+"/{sample_id}/{sample_id}_abag_dockq.csv"),
     conda:
         config["run_dockq_env"]
-    script:
-        "scripts/run_abag_dockq.py"
+    shell:
+        """
+        python scripts/run_abag_dockq.py \
+            --input_csv {input[0]} \
+            --query_pdb {input.query_cut} \
+            --reference_pdb {input.reference_cut} \
+            --sample_id {wildcards.sample_id} \
+            --output {output[0]}
+        """
 
 # Define the rule to run DockQ
 rule run_pdockqv2:
@@ -145,8 +168,14 @@ rule run_pdockqv2:
         temp(output_dir+"/{sample_id}/{sample_id}_pdockq2.csv"),
     conda:
         config["run_pdockq2_env"]
-    script:
-        "scripts/run_pdockq2.py"
+    shell:
+        """
+        python scripts/run_pdockqv2.py \
+            --sample_id {wildcards.sample_id} \
+            --query_pdb {input.query_pdb} \
+            --af_data {input.af_data} \
+            --output_csv {output[0]}
+        """
 
 # Calculate aeTM
 rule run_get_af_prediction:
@@ -157,8 +186,13 @@ rule run_get_af_prediction:
         temp(output_dir+"/{sample_id}/{sample_id}_af_prediction.csv"),
     conda:
         config["run_get_af_prediction_env"]
-    script:
-        "scripts/run_get_af_prediction.py"
+    shell:
+        """
+        python scripts/run_get_af_prediction.py \
+        --sample_id {wildcards.sample_id} \
+        --af_data {input.af_data} \
+        --output_csv {output[0]}
+        """
 
 
 

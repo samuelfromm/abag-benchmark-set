@@ -1,4 +1,5 @@
-from snakemake.script import snakemake
+import argparse
+import sys
 import DockQ.DockQ
 import pandas as pd
 
@@ -14,72 +15,79 @@ def merge_chains(model, chains_to_merge, new_chain_name=None):
         model[chains_to_merge[0]].id = "".join(chains_to_merge)
     return model
 
+def parse_arguments():
+    """Parse command-line arguments."""
+    parser = argparse.ArgumentParser(description="Run DockQ analysis with merged chains.")
+    parser.add_argument("--sample_id", required=True, help="Sample ID for processing.")
+    parser.add_argument("--input_csv", required=True, help="Path to input CSV file with sample information.")
+    parser.add_argument("--query_pdb", required=True, help="Path to the query PDB file.")
+    parser.add_argument("--reference_pdb", required=True, help="Path to the reference PDB file.")
+    parser.add_argument("--output_csv", required=True, help="Path to save the output CSV file.")
+    return parser.parse_args()
 
+def main():
+    args = parse_arguments()
 
-sample_id = snakemake.wildcards.sample_id
+    # Read input sample data
+    input_samples_df = pd.read_csv(args.input_csv, index_col="sample_id", na_values=[], keep_default_na=False)
+    sample_id = args.sample_id
 
-input_samples_df = pd.read_csv(snakemake.input[0], index_col="sample_id", na_values=[], keep_default_na=False)
+    Hchain = input_samples_df.at[sample_id, "Hchain"]
+    Achain = input_samples_df.at[sample_id, "Achain"]
+    Lchain = input_samples_df.at[sample_id, "Lchain"]
 
-Hchain = input_samples_df.at[sample_id, "Hchain"]
-Achain = input_samples_df.at[sample_id, "Achain"]
-Lchain = input_samples_df.at[sample_id, "Lchain"]
+    agchains = [part.strip() for part in Achain.split("|")]
+    abchains = [Hchain]
+    if Lchain != "NA":
+        abchains.append(Lchain)
 
+    print("Ag chains: ", agchains)
+    print("Ab chains: ", abchains)
 
-agchains = [part.strip() for part in Achain.split("|")]
-abchains = [Hchain]
-if Lchain != "NA":
-    abchains.append(Lchain)
+    # Load the model and native structures
+    model = DockQ.DockQ.load_PDB(args.query_pdb)
+    native = DockQ.DockQ.load_PDB(args.reference_pdb)
 
-print("Ag chains: ", agchains)
-print("Ab chains: ", abchains)
+    # Merge chains and rename chains
+    model = merge_chains(model, agchains, "Ag")
+    native = merge_chains(native, agchains, "Ag")
 
-# Load the model and native structures
-model = DockQ.DockQ.load_PDB(snakemake.input.query_cut)
-native = DockQ.DockQ.load_PDB(snakemake.input.reference_cut)
+    model = merge_chains(model, abchains, "Ab")
+    native = merge_chains(native, abchains, "Ab")
 
-# merge chains and rename chains
+    # Native:model chain map dictionary for two interfaces
+    chain_map = {"Ag": "Ag", "Ab": "Ab"}
 
-model = merge_chains(model, agchains,"Ag")
-native = merge_chains(native, agchains, "Ag")
+    # Returns a dictionary containing the results and the total DockQ score
+    dockq_results, total_dockq_score = DockQ.DockQ.run_on_all_native_interfaces(
+        model, native, chain_map=chain_map
+    )
 
-model = merge_chains(model, abchains, "Ab")
-native = merge_chains(native, abchains, "Ab")
+    # Initialize an empty dictionary to store statistics for each metric
+    metrics = ["DockQ", "LRMSD", "iRMSD", "fnat", "clashes"]
+    output_data = {"sample_id": sample_id}
+    precision = 2
 
+    if len(dockq_results) > 1:
+        sys.exit("ERROR: Expected a single interface.")
 
-# native:model chain map dictionary for two interfaces
-chain_map = {"Ag": "Ag", "Ab": "Ab"}
+    # Loop through each metric and calculate statistics
+    for metric in metrics:
+        if "AgAb" in dockq_results.keys():
+            output_data["abag_" + metric.lower()] = round(dockq_results["AgAb"][metric], precision)
+            output_data["abag_receptor"] = "Ag"
+        elif "AbAg" in dockq_results.keys():
+            output_data["abag_" + metric.lower()] = round(dockq_results["AbAg"][metric], precision)
+            output_data["abag_receptor"] = "Ab"
+        else:
+            sys.exit("ERROR: Unexpected interface.")
 
-# returns a dictionary containing the results and the total DockQ score
-dockq_results, total_dockq_score = DockQ.DockQ.run_on_all_native_interfaces(
-    model, native, chain_map=chain_map
-)
+    # Save the output data to a CSV file
+    output_df = pd.DataFrame([output_data])
+    output_df.to_csv(args.output_csv, index=False)
 
-
-# Initialize an empty dictionary to store statistics for each metric
-metrics = ["DockQ", "LRMSD", "iRMSD", "fnat", "clashes"]
-output_data = {"sample_id": sample_id}
-precision = 2
-
-if len(dockq_results) > 1:
-    sys.exit("ERROR: Expected a single interface.")
-
-
-# Loop through each metric and calculate statistics
-for metric in metrics:
-    if "AgAb" in dockq_results.keys():
-        output_data["abag_" + metric.lower()] = round(dockq_results["AgAb"][metric], precision)
-        output_data["abag_receptor"] = "Ag"
-    elif "AbAg" in dockq_results.keys():
-        output_data["abag_" + metric.lower()] = round(dockq_results["AbAg"][metric], precision)
-        output_data["abag_receptor"] = "Ab"
-    else:
-        sys.exit("ERROR: Unexpected interface.")
-
-
-# Save the output data to a CSV file
-output_df = pd.DataFrame([output_data])
-output_df.to_csv(snakemake.output[0], index=False)
-
+if __name__ == "__main__":
+    main()
 
 # ----------------------EXAMPLE-DOCKQ--------------------#
 # (

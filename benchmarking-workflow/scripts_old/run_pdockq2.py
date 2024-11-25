@@ -1,4 +1,7 @@
+from snakemake.script import snakemake
+import pandas as pd
 import subprocess
+import sys
 
 ##### pdockq2 script start
 
@@ -14,6 +17,11 @@ import itertools
 import pandas as pd
 from scipy.optimize import curve_fit
 
+
+parser = argparse.ArgumentParser(description = '''Calculate chain_level pDockQ_i. ''')
+parser.add_argument('-pkl', nargs=1, type= str, required=True, help ='Input pickle file.')
+parser.add_argument('-pdb', nargs=1, type= str, required=True, help ='Input pdb file.')
+parser.add_argument("-dist", help="maximum distance of a contact", nargs='?', type=int, default=8)
 
 def retrieve_IFplddt(structure, chain1, chain2_lst, max_dist):
     ## generate a dict to save IF_res_id
@@ -175,46 +183,34 @@ def calculate_pdockq2(pkl,pdb,dist=8):
     return res
 
 
-def parse_arguments():
-    """Parse command-line arguments."""
-    parser = argparse.ArgumentParser(description="Calculate pDockQ2 metrics for given data.")
-    parser.add_argument("--sample_id", required=True, help="Sample ID for processing.")
-    parser.add_argument("--query_pdb", required=True, help="Path to the query PDB file.")
-    parser.add_argument("--af_data", required=True, help="Path to the AlphaFold data file.")
-    parser.add_argument("--output_csv", required=True, help="Path to save the output CSV file.")
-    return parser.parse_args()
+sample_id = snakemake.wildcards.sample_id
+query_pdb = snakemake.input.query_pdb
+af_data = snakemake.input.af_data
 
-def main():
-    args = parse_arguments()
+pdockq2_df = calculate_pdockq2(af_data,query_pdb)
 
-    sample_id = args.sample_id
-    query_pdb = args.query_pdb
-    af_data = args.af_data
+# Initialize an empty dictionary to store statistics for each metric
+metrics = ["pmidockq"]
+output_data = {"sample_id": sample_id}
+precision = 2
 
-    # Calculate pDockQ2 metrics
-    pdockq2_df = calculate_pdockq2(af_data, query_pdb)
+# Loop through each metric and calculate statistics
+for metric in metrics:
+    # Extract metric values for all interfaces
+    
+    
 
-    # Initialize an empty dictionary to store statistics for each metric
-    metrics = ["pmidockq"]
-    output_data = {"sample_id": sample_id}
-    precision = 2
+    # Calculate statistics for the current metric
+    average_metric = pdockq2_df[metric].mean()
+    max_metric = pdockq2_df[metric].max()
+    min_metric = pdockq2_df[metric].min()
 
-    # Loop through each metric and calculate statistics
-    for metric in metrics:
-        # Calculate statistics for the current metric
-        average_metric = pdockq2_df[metric].mean()
-        max_metric = pdockq2_df[metric].max()
-        min_metric = pdockq2_df[metric].min()
-
-        # Store the results in the output data with rounded values
-        output_data[f"min_{metric.lower()}"] = round(min_metric, precision)
-        output_data[f"max_{metric.lower()}"] = round(max_metric, precision)
-        output_data[f"average_{metric.lower()}"] = round(average_metric, precision)
-
-    # Save the output data to a CSV file
-    output_df = pd.DataFrame([output_data])
-    output_df.to_csv(args.output_csv, index=False)
+    # Store the results in the output data with rounded values
+    output_data[f"min_{metric.lower()}"] = round(min_metric, precision)
+    output_data[f"max_{metric.lower()}"] = round(max_metric, precision)
+    output_data[f"average_{metric.lower()}"] = round(average_metric, precision)
 
 
-if __name__ == "__main__":
-    main()
+# Save the output data to a CSV file
+output_df = pd.DataFrame([output_data])
+output_df.to_csv(snakemake.output[0], index=False)
