@@ -48,13 +48,14 @@ def main():
         return_string=False,
     )
 
+    precision = 2
     # Prepare the output data
     output_data = {
         "sample_id": sample_id,
-        "fraction_aligned_residues_reference": fraction_aligned_residues_native,
-        "fraction_aligned_residues_query": fraction_aligned_residues_model,
-        "min_fraction_aligned_chain_residues_reference": min_fraction_aligned_chain_residues_native,
-        "min_fraction_aligned_chain_residues_query": min_fraction_aligned_chain_residues_model,
+        "fraction_aligned_residues_reference": round(fraction_aligned_residues_native,precision),
+        "fraction_aligned_residues_query": round(fraction_aligned_residues_model,precision),
+        "min_fraction_aligned_chain_residues_reference": round(min_fraction_aligned_chain_residues_native,precision),
+        "min_fraction_aligned_chain_residues_query": round(min_fraction_aligned_chain_residues_model,precision),
         "reference_cut": args.reference_cut,
         "query_cut": args.query_cut,
     }

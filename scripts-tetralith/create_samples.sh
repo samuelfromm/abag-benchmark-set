@@ -2,21 +2,21 @@
 
 # Check if BASEDIR argument is provided
 if [ -z "$1" ]; then
-    echo "Usage: $0 <BASEDIR>"
+    echo "Usage: $0 <RUNNAME>"
     exit 1
 fi
 
 # Set BASEDIR from the command-line argument
-BASEDIR="$1"
+BASEDIR="/proj/elofssonlab/users/x_safro/git"
 
 # Set the default values for the variables
-RUNNAME="default"
+RUNNAME="$1"
 NUMPREDICTIONS=40
 WEIGHT_VERSION="multimer_v3"
 DB_FILE="$BASEDIR/abag-benchmark-set/data/db/lightDb.txt"
-MODELDIR="$BASEDIR/abag-benchmark-set/data/models_test"
+MODELDIR="$BASEDIR/abag-benchmark-set/data/models"
 
-OUTPUT_FILE="./samples.csv"
+OUTPUT_FILE="./samples_$RUNNAME.csv"
 FILTERED_PDB_DIR="$BASEDIR/abag-benchmark-set/data/db/structures_filtered"
 
 # Templates for paths
@@ -44,9 +44,9 @@ substitute_template() {
 
 # Read the database file, skipping the header
 tail -n +2 "$DB_FILE" | while IFS=, read -r pdb_id chain_A chain_H chain_L; do
-    if [[ "$pdb_id" != "7ox2" ]]; then
-        continue
-    fi
+    # if [[ "$pdb_id" != "7ox2" ]]; then
+    #     continue
+    # fi
     for MODEL_NUM in {1..5}; do
         for ((PRED_NUM = 0; PRED_NUM < NUMPREDICTIONS; PRED_NUM++)); do
 
@@ -58,12 +58,20 @@ tail -n +2 "$DB_FILE" | while IFS=, read -r pdb_id chain_A chain_H chain_L; do
             REFERENCE_PDB="$FILTERED_PDB_DIR/${pdb_id}_filtered.pdb"
             MODEL="model_${MODEL_NUM}_${WEIGHT_VERSION}"
 
-            # Validate file existence and warn if files are missing
+            # Validate file existence and skip appending to OUTPUT_FILE if any file is missing
+            all_files_exist=true
             for file in "$QUERY_PDB" "$REFERENCE_PDB" "$QUERY_DATA" "$QUERY_FEATURES"; do
                 if [ ! -f "$file" ]; then
                     echo "Warning: File $file not found"
+                    all_files_exist=false
+                    break
                 fi
             done
+
+            # Skip processing if any file is missing
+            if [ "$all_files_exist" = false ]; then
+                continue
+            fi
 
             # Append the processed data to the output file
             echo "${SAMPLE_ID},${pdb_id},${chain_A},${chain_H},${chain_L},${REFERENCE_PDB},${QUERY_PDB},${QUERY_FEATURES},${QUERY_DATA},${MODEL},${PRED_NUM}" >> "$OUTPUT_FILE"

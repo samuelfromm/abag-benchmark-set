@@ -1,7 +1,7 @@
 
 # Data
-output_dir: "output"
-samples_csv: "input/samples.csv"
+#output_dir: "output"
+#samples_csv: "input/samples.csv"
 
 
 # Programs
