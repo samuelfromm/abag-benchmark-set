@@ -1,6 +1,7 @@
 import argparse
 import DockQ.DockQ
 import pandas as pd
+import sys
 
 def parse_arguments():
     """Parse command-line arguments."""
@@ -34,21 +35,29 @@ def main():
     model = DockQ.DockQ.load_PDB(args.query_cut)
     native = DockQ.DockQ.load_PDB(args.reference_cut)
 
-    # Run DockQ and get the output data
-    dockq_results, total_dockq_score = DockQ.DockQ.run_on_all_native_interfaces(
-        model, native, chain_map=chain_map
-    )
+    try:
+        # Run DockQ and get the output data
+        dockq_results, total_dockq_score = DockQ.DockQ.run_on_all_native_interfaces(
+            model, native, chain_map=chain_map
+        )
+    except Exception as e:
+        # Handle the exception
+        sys.exit(f"ERROR: An error occurred while running DockQ: {e}")
+
 
     # Initialize an empty dictionary to store statistics for each metric
     metrics = ["DockQ", "LRMSD", "iRMSD", "fnat", "clashes"]
     output_data = {"sample_id": sample_id}
     precision = 2
 
+    if not dockq_results:
+        sys.exit("ERROR: DockQ returned an empty dictionary.")
+
+
     # Loop through each metric and calculate statistics
     for metric in metrics:
         # Extract metric values for all interfaces
         metric_vals = [interface_data[metric] for interface_data in dockq_results.values()]
-
         # Calculate statistics for the current metric
         average_metric = sum(metric_vals) / len(metric_vals)
         max_metric = max(metric_vals)

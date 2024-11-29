@@ -52,22 +52,6 @@ We run 40 predictions per model with the AlphaFold 2 standard parameters, result
 
  # QUESTIONS
 
- - WHich parameters to use for global aligner
- - which antigen-type to include in after cut off set / before cutoff set? (see filterbycutoffdate)
- ['Hapten' nan 'protein | protein' 'protein' 'protein | peptide'
- 'nucleic-acid' 'protein | protein | protein' 'peptide' 'carbohydrate'
- 'protein | protein | protein | protein' 'peptide | peptide'
- 'peptide | protein' 'protein | protein | peptide'
- 'protein | protein | protein | protein | protein'
- 'protein | peptide | protein' 'protein | protein | protein | peptide'
- 'protein | nucleic-acid' 'unknown' 'carbohydrate | protein | protein'
- 'peptide | peptide | peptide' 'peptide | protein | protein'
- 'carbohydrate | protein' 'nucleic-acid | nucleic-acid'
- 'nucleic-acid | nucleic-acid | nucleic-acid']
-
- - "Single-Chain Fragment Variable (scFv) anti-
-bodies were excluded, as many methods predict the
-heavy and light chains separately, but DOCKQ score can-
-not pair multiple chains to a single chain. "
-Should scFv be excluded?
-- allow different methods in the trainign dataset? (SOLUTION, etc.)
+- For 1 ID, the MSA generation did not run
+- For 4 IDs, AADaM does not run properly (i.e. 8r4q,8ezl,8cz8,7tzh there is an with the L chain identifier being the same as the H chain identifier, but the complex fasta lists different identifiers)
+- For 2 IDs, dockq returns an empty dictionary in some cases (i.e. 8hbi,8f8w) (NOTE: This can possibly be fixed)

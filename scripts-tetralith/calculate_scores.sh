@@ -20,6 +20,8 @@ CONFIGFILE="$BASEDIR/config/config_prebuilt.yaml"
 OUTDIR="/proj/elofssonlab/users/x_safro/git/abag-benchmark-set/data/scores/$RUNNAME/output"
 SAMPLES_CSV="/proj/elofssonlab/users/x_safro/git/abag-benchmark-set/data/scores/$RUNNAME/input/samples_$RUNNAME.csv"
 SMKFILE="$BASEDIR/calculate_scores.smk"
+MERGESMKFILE="$BASEDIR/merge.smk"
 
-snakemake -s $SMKFILE --use-conda --configfile $CONFIGFILE --directory $BASEDIR --cores 32 --config output_dir=$OUTDIR samples_csv=${SAMPLES_CSV} --keep-going
+#snakemake -s $SMKFILE --use-conda --configfile $CONFIGFILE --directory $BASEDIR --cores $SLURM_CPUS_PER_TASK --config output_dir=$OUTDIR samples_csv=${SAMPLES_CSV} --keep-going
 
+snakemake -s $MERGESMKFILE --use-conda --configfile $CONFIGFILE --directory $BASEDIR --cores $SLURM_CPUS_PER_TASK --config output_dir=$OUTDIR samples_csv=${SAMPLES_CSV} --keep-going

@@ -58,10 +58,15 @@ def main():
     # Native:model chain map dictionary for two interfaces
     chain_map = {"Ag": "Ag", "Ab": "Ab"}
 
-    # Returns a dictionary containing the results and the total DockQ score
-    dockq_results, total_dockq_score = DockQ.DockQ.run_on_all_native_interfaces(
-        model, native, chain_map=chain_map
-    )
+    try:
+        # Run DockQ and get the output data
+        dockq_results, total_dockq_score = DockQ.DockQ.run_on_all_native_interfaces(
+            model, native, chain_map=chain_map
+        )
+    except Exception as e:
+        # Handle the exception
+        print(f"An error occurred while running DockQ: {e}")
+
 
     # Initialize an empty dictionary to store statistics for each metric
     metrics = ["DockQ", "LRMSD", "iRMSD", "fnat", "clashes"]
@@ -69,7 +74,11 @@ def main():
     precision = 2
 
     if len(dockq_results) > 1:
-        sys.exit("ERROR: Expected a single interface.")
+        sys.exit(f"ERROR: Expected a single interface. DockQ output: {dockq_results}")
+
+    if not dockq_results:
+        sys.exit("ERROR: DockQ returned an empty dictionary.")
+
 
     # Loop through each metric and calculate statistics
     for metric in metrics:
@@ -80,7 +89,7 @@ def main():
             output_data["abag_" + metric.lower()] = round(dockq_results["AbAg"][metric], precision)
             output_data["abag_receptor"] = "Ab"
         else:
-            sys.exit("ERROR: Unexpected interface.")
+            sys.exit(f"ERROR: Unexpected interface. DockQ output: {dockq_results}")
 
     # Save the output data to a CSV file
     output_df = pd.DataFrame([output_data])

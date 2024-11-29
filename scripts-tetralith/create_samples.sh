@@ -27,7 +27,7 @@ SAMPLE_ID_TEMPLATE="{ID}_model_{MODEL_NUM}_${WEIGHT_VERSION}_pred_{PRED_NUM}_${R
 
 # Initialize the output file
 > "$OUTPUT_FILE"
-echo "sample_id,pdbid,Achain,Hchain,Lchain,reference_pdb,query_pdb,query_af_features,query_af_data,model,prediction" >> "$OUTPUT_FILE"
+echo "sample_id,pdbid,Achain,Hchain,Lchain,reference_pdb,query_pdb,query_af_features,query_af_data,model,prediction,preset" >> "$OUTPUT_FILE"
 
 # Function to substitute variables in templates
 substitute_template() {
@@ -74,7 +74,7 @@ tail -n +2 "$DB_FILE" | while IFS=, read -r pdb_id chain_A chain_H chain_L; do
             fi
 
             # Append the processed data to the output file
-            echo "${SAMPLE_ID},${pdb_id},${chain_A},${chain_H},${chain_L},${REFERENCE_PDB},${QUERY_PDB},${QUERY_FEATURES},${QUERY_DATA},${MODEL},${PRED_NUM}" >> "$OUTPUT_FILE"
+            echo "${SAMPLE_ID},${pdb_id},${chain_A},${chain_H},${chain_L},${REFERENCE_PDB},${QUERY_PDB},${QUERY_FEATURES},${QUERY_DATA},${MODEL},${PRED_NUM},${RUNNAME}" >> "$OUTPUT_FILE"
         done
     done
 done

@@ -24,11 +24,6 @@ def get_sample_value(wildcards, column):
 # Define the rule all to run all the outputs
 rule all:
     input:
-        #expand(output_dir+"/{sample_id}/{sample_id}_alignments.csv", sample_id=input_samples.index),
-        # expand(output_dir+"/{sample_id}/{sample_id}_align_and_cut.csv", sample_id=input_samples.index),
-        # expand(output_dir+"/{sample_id}/{sample_id}_dockq.csv", sample_id=input_samples.index),
-        # expand(output_dir+"/{sample_id}/{sample_id}_mmscore.csv", sample_id=input_samples.index),
-        # expand(output_dir+"/{sample_id}/{sample_id}_aetm.csv", sample_id=input_samples.index),
         expand(output_dir+"/{sample_id}/{sample_id}_merged.csv", sample_id=input_samples.index),
         output_dir+"/scores.csv",
 
@@ -160,7 +155,7 @@ rule run_abag_dockq:
         """
 
 # Define the rule to run DockQ
-rule run_pdockqv2:
+rule run_pdockq2:
     input:
         query_pdb=lambda wildcards: get_sample_value(wildcards, 'query_pdb'),
         af_data=lambda wildcards: get_sample_value(wildcards, 'query_af_data'),
@@ -170,7 +165,7 @@ rule run_pdockqv2:
         config["run_pdockq2_env"]
     shell:
         """
-        python scripts/run_pdockqv2.py \
+        python scripts/run_pdockq2.py \
             --sample_id {wildcards.sample_id} \
             --query_pdb {input.query_pdb} \
             --af_data {input.af_data} \
@@ -202,7 +197,9 @@ rule merge_scores:
         output_dir+"/{sample_id}/{sample_id}_align_and_cut.csv",
         output_dir+"/{sample_id}/{sample_id}_dockq.csv",
         output_dir+"/{sample_id}/{sample_id}_abag_dockq.csv",
-        output_dir+"/{sample_id}/{sample_id}_af_prediction.csv"
+        output_dir+"/{sample_id}/{sample_id}_mmscore.csv",
+        output_dir+"/{sample_id}/{sample_id}_pdockq2.csv",
+        output_dir+"/{sample_id}/{sample_id}_af_prediction.csv",
     output:
         output_dir+"/{sample_id}/{sample_id}_merged.csv",
     run:
