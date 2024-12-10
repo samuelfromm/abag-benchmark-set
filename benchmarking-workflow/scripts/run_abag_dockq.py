@@ -77,7 +77,10 @@ def main():
         sys.exit(f"ERROR: Expected a single interface. DockQ output: {dockq_results}")
 
     if not dockq_results:
-        sys.exit("ERROR: DockQ returned an empty dictionary.")
+        print("WARNING: DockQ returned an empty dictionary.")
+        print("WARNING: Setting all metrics to 0.")
+        dockq_results = {"AgAb": {metric: 0 for metric in metrics}}
+
 
 
     # Loop through each metric and calculate statistics

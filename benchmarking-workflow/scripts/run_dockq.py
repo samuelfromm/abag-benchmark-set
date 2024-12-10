@@ -51,7 +51,9 @@ def main():
     precision = 2
 
     if not dockq_results:
-        sys.exit("ERROR: DockQ returned an empty dictionary.")
+        print("WARNING: DockQ returned an empty dictionary.")
+        print("WARNING: Setting all metrics to 0.")
+        dockq_results = {"E": {metric: 0 for metric in metrics}}
 
 
     # Loop through each metric and calculate statistics
