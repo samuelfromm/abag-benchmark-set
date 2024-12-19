@@ -52,7 +52,7 @@ Please make sure to document your runs (e.g. which settings and parameters you u
 
 # Timeline
 
-It would be great if we could finish the benchmarking until say middle of January or third week of January.
+It would be great if we could finish the benchmarking until end of January (since I finish in March and we need time to analyse).
 
 Depending on how AF3 performs, it might be interesting to run AF3 with msa subsampling (subsampling increases performance of AF2 by a fair bit). However, I am not sure if we are allowed to modify AF3 so that is why we would need Boltz too (since it is opensource).
 

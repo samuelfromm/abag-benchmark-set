@@ -18,10 +18,12 @@ NUMPREDICTIONS=$4    # Fourth argument is the number of predictions per model
 # Output files in the current directory
 MISSINGFILE="./IDs_${RUNNAME}_missing.csv"
 COMPLETEDFILE="./IDs_${RUNNAME}_completed.csv"
+ALLMISSINGFILE="./IDs_${RUNNAME}_all_missing.csv"
 
 # Create empty output files
 > "$MISSINGFILE"
 > "$COMPLETEDFILE"
+> "$ALLMISSINGFILE"
 
 # Loop through each ID in the ID file
 while IFS= read -r ID; do
@@ -35,7 +37,8 @@ while IFS= read -r ID; do
             if [ ! -f "$filepath" ]; then
                 echo "Missing file: $filepath"
                 all_files_present=false
-                break 2
+                #break 2
+                echo "${ID}/result_model_${i}_multimer_v3_pred_${k}_${RUNNAME}.pkl" >> "$ALLMISSINGFILE"
             fi
         done
     done

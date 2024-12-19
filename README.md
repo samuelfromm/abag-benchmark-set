@@ -22,24 +22,47 @@ As a starting point, we use all structures deposited in SAbDab on **2024-10-23 1
 --methodsAllowed='X-RAY DIFFRACTION,ELECTRON MICROSCOPY'
 ```
 
-For details on what this exactly means see the description for https://github.com/samuelfromm/AADaM-fork. 
+For details on what the respective parameters exactly mean see the description for https://github.com/samuelfromm/AADaM-fork. 
+
+The resulting dataset consists of 115 antibody-antigen structures. Each complex consists of one or several antigen chains, a heavy chain and a light chain (if applicable). 
+
+## Dateset structure
 
 
-The resulting dataset consists of 116 antibody-antigen structures. Each complex consists of one or several antigen chains, a heavy chain and a light chain (if applicable).
+data/
+    db/
+        antibodyFastas                  
+        antibodyFastasColonSep
+        antigenFastas
+        antigenFastasColonSep
+        complexFastas               # contains the fasta files for each (interface) complex
+        complexFastasColonSep
+        fullDb.json                 # contains some metadata about each (interface) complex
+        fullDb.pkl
+        IDs.csv                     # contains the complex IDs
+        IDs_msas.csv
+        IDs_working.csv
+        lightDb.txt                 # a csv file with columns "pdb ID,A chain(s),H chain(s),L chain(s)"
+        structures/                 # pdb files for the ground truth complexes
+        structures_filtered/
+    MSA/
+        (contents of MSA directory here)
+    MSA.zip
 
-# Model generation
+## MSA generation
 
-We run Alphafold 2.3.2.
+The MSAs were generated using the standard We run Alphafold 2.3.2 pipeline (specifically commit `f251de6`). Out of the 115 complexes, one complex did not run due to a failure of HHblits.
 
-### MSA generation
+# MODEL GENERATION
 
-We run the default Alphafold pipeline for MSA generation. Out of the 116 complexes, one complex did not run due to a failure of HHblits.
+## AF2 based 
 
-### Model generation
+For the AF2 based methods, we use Alphafold 2.3.2 (specifically commit `f251de6`) unless stated otherwise.
 
-#### AF default
 
-We run 40 predictions per model with the AlphaFold 2 standard parameters, resulting in 40x5=200 models.
+*default*: We run 40 predictions per model with the AlphaFold 2 standard parameters, resulting in 40x5=200 models.
+
+
 
 # References
 
@@ -50,8 +73,7 @@ We run 40 predictions per model with the AlphaFold 2 standard parameters, result
 
 
 
- # QUESTIONS
+ # ISSUES
 
-- For 1 ID, the MSA generation did not run
-- For 4 IDs, AADaM does not run properly (i.e. 8r4q,8ezl,8cz8,7tzh there is an with the L chain identifier being the same as the H chain identifier, but the complex fasta lists different identifiers)
-- [default, norecycles] For 2 IDs, dockq returns an empty dictionary in some cases (i.e. 8hbi,8f8w) (NOTE: This can possibly be fixed)
+- For 1 ID, 8w90, the MSA generation did not run due to a failure of HHblits
+- For 4 IDs, AADaM does not run properly (i.e. 8r4q,8ezl,8cz8,7tzh: the issue is that the L chain identifier output by AADaM is the same as the H chain identifier. One could probably fix these manually by looking up the correct L chain identifier in the ground truth PDB file but I decided to ignore this and move on.)

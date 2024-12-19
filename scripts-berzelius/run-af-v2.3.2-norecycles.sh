@@ -2,9 +2,9 @@
 #SBATCH -A berzelius-2024-220
 #SBATCH --output=/proj/berzelius-2021-29/users/x_safro/git/abag-benchmark-set/logs/%A_%a.out
 #SBATCH --error=/proj/berzelius-2021-29/users/x_safro/git/abag-benchmark-set/logs/%A_%a.err
-#SBATCH --array=1-113
+#SBATCH --array=1-114
 #SBATCH --gpus=1
-#SBATCH -t 24:00:00
+#SBATCH -t 48:00:00
 #SBATCH --export=ALL,CUDA_VISIBLE_DEVICES
 
 # Load necessary modules
@@ -14,7 +14,7 @@ module load AlphaFold/2.3.2-hpc1
 offset=${1:-0}
 LN=$(( SLURM_ARRAY_TASK_ID + offset ))
 
-RUNNAME="default"
+RUNNAME="norecycles"
 
 # File paths
 IDFILE="/proj/berzelius-2021-29/users/x_safro/git/abag-benchmark-set/IDs_${RUNNAME}_missing.csv"
@@ -59,6 +59,7 @@ run_specific_flags=(
   "--starting_prediction_per_model=0"
   "--suffix=${RUNNAME}"
   "--reuse_features=True"
+  "--number_recycles=0"
 )
 
 
