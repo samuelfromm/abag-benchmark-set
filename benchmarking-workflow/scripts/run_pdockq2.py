@@ -1,6 +1,8 @@
 import subprocess
 
 ##### pdockq2 script start
+# The code for pdockq2 is copied from https://gitlab.com/ElofssonLab/afm-benchmark 
+
 
 from Bio.PDB import PDBIO
 from Bio.PDB.PDBParser import PDBParser
@@ -10,6 +12,7 @@ import numpy as np
 import sys,os
 import argparse
 import pickle
+import json
 import itertools
 import pandas as pd
 from scipy.optimize import curve_fit
@@ -48,7 +51,6 @@ def retrieve_IFplddt(structure, chain1, chain2_lst, max_dist):
        IF_plddt_avg = 0
 
     return IF_plddt_avg, contact_chain_lst
-
 
 def retrieve_IFPAEinter(structure, paeMat, contact_lst, max_dist):
     ## contact_lst:the chain list that have an interface with each chain. For eg, a tetramer with A,B,C,D chains and A/B A/C B/D C/D interfaces,
@@ -95,7 +97,6 @@ def retrieve_IFPAEinter(structure, paeMat, contact_lst, max_dist):
 
     return ifpae_avg
     
-
 def calc_pmidockq(ifpae_norm, ifplddt):
     df = pd.DataFrame()
     df['ifpae_norm'] = ifpae_norm
@@ -109,8 +110,6 @@ def calc_pmidockq(ifpae_norm, ifplddt):
 def sigmoid(x, L ,x0, k, b):
     y = L / (1 + np.exp(-k*(x-x0)))+b
     return (y)
-
-
 
 def fit_newscore(df, column):
 
@@ -143,7 +142,7 @@ def fit_newscore(df, column):
 
 ##### pdockq2 script end
 
-def calculate_pdockq2(pkl,pdb,dist=8):
+def calculate_pdockq2(file_path,pdb,dist=8):
 
     pdbp = PDBParser(QUIET=True)
     iopdb = PDBIO()
@@ -162,16 +161,45 @@ def calculate_pdockq2(pkl,pdb,dist=8):
         plddt_lst.append(IF_plddt)
         remain_contact_lst.append(contact_lst)
 
-    ## retrieve interface PAE at chain-level
-    with open(pkl,'rb') as f:
-        data = pickle.load(f)
+    # Check the file extension to determine the format
+    _, file_extension = os.path.splitext(file_path)
+    
+    if file_extension == ".pkl":
+        # Load data from the pickle file
+        with open(file_path, "rb") as f:
+            data = pickle.load(f)
+    elif file_extension == ".json":
+        # Load data from the JSON file
+        with open(file_path, "r") as f:
+            data = json.load(f)
+    else:
+        print(f"Unsupported file format: {file_extension}. Please use a .pkl or .json file.")
+        return
 
-    avgif_pae = retrieve_IFPAEinter(structure, data['predicted_aligned_error'], remain_contact_lst, dist)
-    ## calculate pmiDockQ
+    if not isinstance(data, dict):
+        print("The data is not a dictionary. It might not have keys to inspect.")
+        return
 
-    res = calc_pmidockq(avgif_pae, plddt_lst)
+    if "predicted_aligned_error" in data.keys():
+        pae_data = data['predicted_aligned_error']
+    elif "pae" in data.keys():
+        pae_data = data["pae"]
+    else:
+        raise KeyError("Could not find the predicted aligned error data (keywords 'pae' or 'predicted_aligned_error').")
+
+    # Check if pae_data is a list and convert it to an array
+    if isinstance(pae_data, list):
+        pae_data = np.array(pae_data)
+    elif not isinstance(pae_data, np.ndarray):
+        raise TypeError("The 'pae' or 'predicted_aligned_error' value must be a list or a NumPy array.")
     
 
+    ## retrieve interface PAE at chain-level
+    avgif_pae = retrieve_IFPAEinter(structure, pae_data, remain_contact_lst, dist)
+    
+    ## calculate pmiDockQ
+    res = calc_pmidockq(avgif_pae, plddt_lst)
+    
     return res
 
 
@@ -180,7 +208,7 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description="Calculate pDockQ2 metrics for given data.")
     parser.add_argument("--sample_id", required=True, help="Sample ID for processing.")
     parser.add_argument("--query_pdb", required=True, help="Path to the query PDB file.")
-    parser.add_argument("--af_data", required=True, help="Path to the AlphaFold data file.")
+    parser.add_argument("--af_data", required=True, help="Path to the AlphaFold (or other model) data file containing the predicted aligned error values.")
     parser.add_argument("--output_csv", required=True, help="Path to save the output CSV file.")
     return parser.parse_args()
 
