@@ -1,0 +1,6 @@
+[submodule "modules/openfold"]
+	path = modules/openfold
+	url = https://github.com/aqlaboratory/openfold.git
+[submodule "modules/ColabFold"]
+	path = modules/ColabFold
+	url = https://github.com/sokrypton/ColabFold.git
