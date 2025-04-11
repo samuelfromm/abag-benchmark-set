@@ -1,19 +1,21 @@
 
 # Data
-output_dir: "output"
-samples_csv: "input/samples.csv"
+#output_dir: "output"
+#samples_csv: "input/samples.csv"
 
 
 # Programs
-mmalign_path: "/home/sfromm/programs/MMalign/MMalign" #"/proj/elofssonlab/users/x_safro/programs/MMalign"
+mmalign_path: "/proj/elofssonlab/users/x_safro/programs/MMalign"
 
 
 # Environments to use
-run_align_and_cut_env: "biopython_env"
+run_align_and_cut_env: "dockq_env"
 run_dockq_env: "dockq_env"
-run_pdockq2_env: "openfold_jax_env"
-run_get_af_prediction_env: "openfold_jax_env"
-
+run_pdockq2_env: "af_data_env"
+run_get_af_prediction_env: "af_data_env"
+run_calculate_aligned_error_env: "openfold_env"
+run_calculate_aetm_env: "openfold_env"
+run_get_pae_prediction_env: "openfold_env"
 
 keep-going: True
 use-conda: True

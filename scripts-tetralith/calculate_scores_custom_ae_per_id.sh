@@ -23,19 +23,20 @@ fi
 # Fetch the PDBID corresponding to this SLURM array task
 PDBID=$(sed -n "${SLURM_ARRAY_TASK_ID}p" "$IDFILE")
 
+
 # Check if PDBID was successfully fetched
 if [[ -z "$PDBID" ]]; then
   echo "Error: No PDBID found for SLURM_ARRAY_TASK_ID=${SLURM_ARRAY_TASK_ID}"
   exit 1
 fi
 
-RUNNAME="alphafold3"
+RUNNAME="default"
 
 BASEDIR="/proj/elofssonlab/users/x_safro/git/abag-benchmark-set/benchmarking-workflow"
-CONFIGFILE="$BASEDIR/config/config_prebuilt.yaml"
-OUTDIR="/proj/elofssonlab/users/x_safro/git/abag-benchmark-set/data/scores/$RUNNAME/output/$PDBID"
-SAMPLES_CSV="/proj/elofssonlab/users/x_safro/git/abag-benchmark-set/data/scores/$RUNNAME/input/${PDBID}_samples_$RUNNAME.csv"
-SMKFILE="$BASEDIR/calculate_scores.smk"
+CONFIGFILE="$BASEDIR/config/config_ae_prebuilt.yaml"
+OUTDIR="/proj/elofssonlab/users/x_safro/git/abag-benchmark-set/data/scores_custom_ae/$RUNNAME/output/$PDBID"
+SAMPLES_CSV="/proj/elofssonlab/users/x_safro/git/abag-benchmark-set/data/scores_custom_ae/$RUNNAME/input/${PDBID}_samples_$RUNNAME.csv"
+SMKFILE="$BASEDIR/calculate_scores_custom_aligned_error.smk"
 
 # Ensure necessary directories exist
 mkdir -p "$OUTDIR"

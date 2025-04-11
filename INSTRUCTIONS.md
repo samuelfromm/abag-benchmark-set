@@ -38,15 +38,15 @@ What matters is that I can run a script (see `/proj/berzelius-2021-29/users/x_sa
 
 ## AF2 based models
 
-- afsample2default: 5 x 20 = 200 models (the 5 different model weights and 20 seeds per id. Note that for AF2 the seeds are randomized so you dont have to specify the seed.) (use method 'afsample2') (https://github.com/iamysk/AFsample2)
-- afsample2speachaf: 5 x 20 = 200 models (use method 'speachaf')
-- afsample: 5 x 20 = 200 models (alphafold 2.1 version available here, https://github.com/bjornwallner/alphafoldv2.2.0. One has to update afsample to use alphafold 2.3 first though.)
+- afsample2default: 5 x 40 = 200 models (the 5 different model weights and 20 seeds per id. Note that for AF2 the seeds are randomized so you dont have to specify the seed.) (use method 'afsample2') (https://github.com/iamysk/AFsample2)
+- afsample2speachaf: 5 x 40 = 200 models (use method 'speachaf')
+- afsample: 5 x 40 = 200 models (alphafold 2.1 version available here, https://github.com/bjornwallner/alphafoldv2.2.0. One has to update afsample to use alphafold 2.3 first though.)
 
 ## AF3 based models
 
-- af3default: 5 x 20 = 200 models (5 diffusion samples and 20 seeds per id)
-- boltzdefault: 5 x 20 = 200 models (5 diffusion samples and 20 seeds per id)
-- chai1default: 5 x 20 = 200 models (5 diffusion samples and 20 seeds per id)
+- af3default: 5 x 40 = 200 models (5 diffusion samples and 40 seeds per id)
+- boltzdefault: 5 x 40 = 200 models (5 diffusion samples and 40 seeds per id)
+- chai1default: 5 x 40 = 200 models (5 diffusion samples and 40 seeds per id)
 
 Please make sure to document your runs (e.g. which settings and parameters you use for each of the different runs)
 

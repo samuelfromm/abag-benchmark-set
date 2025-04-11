@@ -189,6 +189,100 @@ rule run_get_af_prediction:
 
 
 
+# Calculate aligned error
+rule run_calculate_aligned_error:
+    input:
+        reference_cut=output_dir+"/{sample_id}/{sample_id}_cut_reference.pdb",
+        query_cut=output_dir+"/{sample_id}/{sample_id}_cut_query.pdb",
+    output:
+        output_dir+"/{sample_id}/{sample_id}_aligned_error.pth",
+    conda:
+        config["run_calculate_aligned_error_env"]
+    shell:
+        """
+        python scripts/run_calculate_aligned_error.py \
+        --sample_id {wildcards.sample_id} \
+        --reference_pdb {input.reference_cut} \
+        --query_pdb {input.query_cut} \
+        --output_data {output[0]}
+        """
+
+
+# Calculate aeTM
+rule run_calculate_aetm:
+    input:
+        aligned_error_data=output_dir+"/{sample_id}/{sample_id}_aligned_error.pth",
+        reference_cut=output_dir+"/{sample_id}/{sample_id}_cut_reference.pdb",
+        query_cut=output_dir+"/{sample_id}/{sample_id}_cut_query.pdb",
+    output:
+        temp(output_dir+"/{sample_id}/{sample_id}_aetm.csv"),
+    conda:
+        config["run_calculate_aetm_env"]
+    shell:
+        """
+        python scripts/run_calculate_aetm.py \
+        --sample_id {wildcards.sample_id} \
+        --aligned_error_data {input.aligned_error_data} \
+        --reference_pdb {input.reference_cut} \
+        --query_pdb {input.query_cut} \
+        --output_csv {output[0]}
+        """
+
+# Calculate aeTM
+rule run_calculate_custom_aetm:
+    input:
+        aligned_error_data=output_dir+"/{sample_id}/{sample_id}_aligned_error.pth",
+        reference_cut=output_dir+"/{sample_id}/{sample_id}_cut_reference.pdb",
+        query_cut=output_dir+"/{sample_id}/{sample_id}_cut_query.pdb",
+    output:
+        temp(output_dir+"/{sample_id}/{sample_id}_custom_aetm.csv"),
+    conda:
+        config["run_calculate_aetm_env"]
+    shell:
+        """
+        python scripts/run_calculate_custom_aetm.py \
+        --sample_id {wildcards.sample_id} \
+        --aligned_error_data {input.aligned_error_data} \
+        --reference_pdb {input.reference_cut} \
+        --query_pdb {input.query_cut} \
+        --output_csv {output[0]}
+        """
+
+rule run_calculate_pae_prediction:
+    input:
+        af_data=lambda wildcards: get_sample_value(wildcards, 'query_af_data'),
+        af_features=lambda wildcards: get_sample_value(wildcards, 'query_af_features'),
+    output:
+        temp(output_dir+"/{sample_id}/{sample_id}_pae_prediction.csv"),
+    conda:
+        config["run_get_pae_prediction_env"]
+    shell:
+        """
+        python scripts/run_calculate_pae_prediction.py \
+        --sample_id {wildcards.sample_id} \
+        --af_data {input.af_data} \
+        --af_features {input.af_features} \
+        --output_csv {output[0]}
+        """
+
+rule run_calculate_custom_pae_prediction:
+    input:
+        af_data=lambda wildcards: get_sample_value(wildcards, 'query_af_data'),
+        af_features=lambda wildcards: get_sample_value(wildcards, 'query_af_features'),
+    output:
+        temp(output_dir+"/{sample_id}/{sample_id}_custom_pae_prediction.csv"),
+    conda:
+        config["run_get_pae_prediction_env"]
+    shell:
+        """
+        python scripts/run_calculate_custom_pae_prediction.py \
+        --sample_id {wildcards.sample_id} \
+        --af_data {input.af_data} \
+        --af_features {input.af_features} \
+        --output_csv {output[0]}
+        """
+
+
 rule merge_scores:
     input:
         output_dir+"/{sample_id}/{sample_id}_alignments.csv",
@@ -198,6 +292,10 @@ rule merge_scores:
         output_dir+"/{sample_id}/{sample_id}_mmscore.csv",
         output_dir+"/{sample_id}/{sample_id}_pdockq2.csv",
         output_dir+"/{sample_id}/{sample_id}_af_prediction.csv",
+        output_dir+"/{sample_id}/{sample_id}_aetm.csv",
+        output_dir+"/{sample_id}/{sample_id}_pae_prediction.csv",
+        output_dir+"/{sample_id}/{sample_id}_custom_aetm.csv",
+        output_dir+"/{sample_id}/{sample_id}_custom_pae_prediction.csv",
     output:
         output_dir+"/{sample_id}/{sample_id}_merged.csv",
     run:

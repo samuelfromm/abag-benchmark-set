@@ -6,6 +6,7 @@
 /data/models
 
 /benchmarking-workflow/output
+/benchmarking-workflow/config/old/
 /.snakemake
 
 # Debgugging
