@@ -25,4 +25,5 @@ python analysis/sample.py --input_csv_paths "$INPUT_CSV_PATH" \
                       --iterations "$ITERATIONS" \
                       --columns_to_analyze $COLUMNS_TO_ANALYZE \
                       --reference_column "$REFERENCE_COLUMN" \
-                      --preset "$PRESET"
+                      --preset "$PRESET" \
+                      --replace

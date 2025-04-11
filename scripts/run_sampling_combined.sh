@@ -58,6 +58,7 @@ python analysis/sample.py --input_csv_paths ${INPUT_CSV_PATHS_JOINED} \
                           --iterations "$ITERATIONS" \
                           --columns_to_analyze $COLUMNS_TO_ANALYZE \
                           --reference_column "$REFERENCE_COLUMN" \
-                          --preset "$PRESET_NAMES"
+                          --preset "$PRESET_NAMES" \
+                            --replace
 
 echo "Processing completed. Results saved to $OUTPUT_CSV_PATH"

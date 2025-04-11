@@ -4,7 +4,7 @@ import argparse
 import numpy as np
 
 
-def analyze_pdb_data_with_steps(data, max_sample_size, step_size, iterations, columns_to_analyze, reference_column, preset):
+def analyze_pdb_data_with_steps(data, max_sample_size, step_size, iterations, columns_to_analyze, reference_column, preset, replace=True):
     """
     Analyzes PDB data by sampling rows and calculating averages for specified columns.
 
@@ -16,6 +16,7 @@ def analyze_pdb_data_with_steps(data, max_sample_size, step_size, iterations, co
     - columns_to_analyze: List of column names to analyze.
     - reference_column: Column used for reference values.
     - preset: String to tag the results with a preset name.
+    - replace: Boolean indicating whether to sample with replacement.
 
     Returns:
     - A DataFrame containing the results of the analysis.
@@ -39,8 +40,8 @@ def analyze_pdb_data_with_steps(data, max_sample_size, step_size, iterations, co
             random_results = []
 
             for _ in range(iterations):
-                # Sample rows with replacement
-                sample = pdb_data.sample(n=sample_size, replace=True, random_state=random.randint(0, 10000))
+
+                sample = pdb_data.sample(n=sample_size, replace=replace, random_state=random.randint(0, 10000))
 
                 # Calculate max-based reference for each column
                 for column in columns_to_analyze:
@@ -71,6 +72,12 @@ def parse_arguments():
     parser.add_argument("--columns_to_analyze", nargs="+", required=True, help="Columns to analyze (space-separated)")
     parser.add_argument("--reference_column", required=True, help="Column for reference values (e.g., abag_dockq)")
     parser.add_argument("--preset", required=True, help="Preset name to include in the results")
+    parser.add_argument(
+        "--replace",
+        action="store_true",
+        default=False,
+        help="Enable replace (default: False). Set to True if specified."
+    )
     return parser.parse_args()
 
 
@@ -99,7 +106,8 @@ if __name__ == "__main__":
         iterations=args.iterations,
         columns_to_analyze=args.columns_to_analyze,
         reference_column=args.reference_column,
-        preset=args.preset
+        preset=args.preset,
+        replace=args.replace
     )
 
     # Save results
