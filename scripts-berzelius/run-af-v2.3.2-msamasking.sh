@@ -2,9 +2,9 @@
 #SBATCH -A berzelius-2024-220
 #SBATCH --output=/proj/berzelius-2021-29/users/x_safro/git/abag-benchmark-set/logs/%A_%a.out
 #SBATCH --error=/proj/berzelius-2021-29/users/x_safro/git/abag-benchmark-set/logs/%A_%a.err
-#SBATCH --array=1
+#SBATCH --array=1-114
 #SBATCH --gpus=1
-#SBATCH -t 60:00:00
+#SBATCH -t 70:00:00
 #SBATCH --export=ALL,CUDA_VISIBLE_DEVICES
 
 # Load necessary modules
@@ -14,7 +14,7 @@ module load AlphaFold/2.3.2-hpc1
 offset=${1:-0}
 LN=$(( SLURM_ARRAY_TASK_ID + offset ))
 
-RUNNAME="subsampling-16-32"
+RUNNAME="msamasking10"
 
 # File paths
 IDFILE="/proj/berzelius-2021-29/users/x_safro/git/abag-benchmark-set/run-info/IDs_${RUNNAME}_missing.csv"
@@ -26,7 +26,7 @@ OUTPUTDIR="/proj/berzelius-2021-29/users/x_safro/git/abag-benchmark-set/data/mod
 MSADIR="/proj/berzelius-2021-29/users/x_safro/git/abag-benchmark-set/data/MSAs"
 
 # Set directories for AlphaFold
-AFHOME="/proj/berzelius-2021-29/users/x_safro/programs/alphafold-clone/"
+AFHOME="/proj/berzelius-2021-29/users/x_safro/programs/alphafold-clone-3/"
 DATABASE_DIR="/proj/berzelius-2021-29/alphafold_data_v2.3"
 PARAMS_DIR=$DATABASE_DIR
 
@@ -53,15 +53,13 @@ flags=(
 )
 
 run_specific_flags=(
-  "--model_preset=multimer" 
+  "--model_preset=multimer"
   "--models_to_relax=none"
   "--num_multimer_predictions_per_model=40"
   "--starting_prediction_per_model=0"
   "--suffix=${RUNNAME}"
   "--reuse_features=True"
-  "--num_msa=16"
-  "--num_extra_msa=32"
-  "--resample_msa_in_recycling=True"
+  "--msa_masking_fraction=0.10"
 )
 
 
