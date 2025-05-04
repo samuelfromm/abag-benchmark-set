@@ -12,6 +12,8 @@ from Bio.PDB.Selection import unfold_entities
 import Bio.SeqUtils
 import pandas as pd
 import io
+from Bio.PDB import MMCIFParser, MMCIFIO
+import os
 
 ### Global variables  - START ###
 
@@ -246,10 +248,10 @@ def remove_hetatm(structure):
 
 def add_arguments(parser):
     parser.add_argument(
-        "-N", "--native", nargs=1, type=str, default="", help="path to model pdb file"
+        "-N", "--native", nargs=1, type=str, default="", help="path to model pdb/cif file"
     )
     parser.add_argument(
-        "-M", "--model", nargs=1, type=str, default="", help="path to model pdb file"
+        "-M", "--model", nargs=1, type=str, default="", help="path to model pdb/cif file"
     )
     parser.add_argument(
         "-n",
@@ -313,15 +315,26 @@ def align_and_cut(
         min_fraction_aligned_chain_residues_model,
 
     """
+    def load_structure(path):
+        ext = os.path.splitext(path)[1].lower()
 
-    pdbp = PDBParser(QUIET=True)
+        if ext == ".pdb":
+            parser = PDBParser(QUIET=True)
+        elif ext == ".cif":
+            parser = MMCIFParser(QUIET=True)
+        else:
+            raise ValueError(f"Unsupported file extension: {ext}")
+
+        return parser.get_structure("", path)
+
     iopdb = PDBIO()
 
-    model_structure = pdbp.get_structure("", path_to_model)
+
+    model_structure = load_structure(path_to_model)
     model_structure = remove_hetatm(model_structure)
     model_model = model_structure[0]
 
-    native_structure = pdbp.get_structure("", path_to_native)
+    native_structure = load_structure(path_to_native)
     native_structure = remove_hetatm(native_structure)
     native_model = native_structure[0]
 

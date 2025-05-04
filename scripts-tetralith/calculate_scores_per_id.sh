@@ -29,7 +29,7 @@ if [[ -z "$PDBID" ]]; then
   exit 1
 fi
 
-RUNNAME="alphafold3"
+RUNNAME="chai1"
 
 BASEDIR="/proj/elofssonlab/users/x_safro/git/abag-benchmark-set/benchmarking-workflow"
 CONFIGFILE="$BASEDIR/config/config_prebuilt.yaml"

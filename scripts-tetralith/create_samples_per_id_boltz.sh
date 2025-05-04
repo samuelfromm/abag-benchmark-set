@@ -8,7 +8,7 @@ fi
 # Set variables
 RUNNAME="$1"
 BASEDIR="/proj/elofssonlab/users/x_safro/git"
-OUTDIR="$BASEDIR/abag-benchmark-set/data/scores_ae/$RUNNAME/input"
+OUTDIR="$BASEDIR/abag-benchmark-set/data/scores/$RUNNAME/input"
 NUMPREDICTIONS=40
 NUMSAMPLES=5
 DB_FILE="$BASEDIR/abag-benchmark-set/data/db/lightDb.txt"

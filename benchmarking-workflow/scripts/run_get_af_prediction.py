@@ -63,8 +63,10 @@ def process_af_data(af_data, precision=2):
         ranking_confidence = af_data["confidence_score"]
     elif "ranking_confidence" in af_data:
         ranking_confidence = af_data["ranking_confidence"]
+    elif "aggregate_score" in af_data:
+        ranking_confidence = af_data["aggregate_score"]
     else:
-        raise KeyError("Could not find the ranking confidence data (keywords 'ranking_score', 'ranking_confidence' or 'confidence_score').")
+        raise KeyError("Could not find the ranking confidence data (keywords 'ranking_score', 'ranking_confidence' or 'confidence_score' or 'aggregate_score').")
 
     
     if "num_recycles" in af_data:

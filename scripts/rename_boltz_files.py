@@ -2,6 +2,7 @@ import os
 import json
 import numpy as np
 import pandas as pd
+import shutil
 
 # Path setup
 base_dir = "/proj/elofssonlab/users/x_safro/git/abag-benchmark-set/data/models/boltz0.4.0"
@@ -37,9 +38,8 @@ for seed in range(1, 41):  # Seeds from 1 to 40
                 print(f"Missing files for {protein_id}, model {i}, seed {seed}. Skipping...")
                 continue
 
-            # Rename and move PDB file
             new_pdb_name = f"model_{i+1}_seed_{seed-1}_boltz.pdb"
-            os.rename(
+            shutil.copy(
                 os.path.join(input_dir, pdb_file),
                 os.path.join(output_dir, new_pdb_name),
             )
