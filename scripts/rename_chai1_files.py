@@ -7,16 +7,14 @@ import logging
 import shutil
 from Bio.PDB import MMCIFParser, PDBIO
 
-def convert_pdb_to_cif(input_cif,output_pdb):
-    # Initialize parser and I/O
+def convert_cif_to_pdb(input_cif_path, output_pdb_path):
     parser = MMCIFParser(QUIET=True)
-    structure = parser.get_structure("model", input_cif)
-
+    structure = parser.get_structure("model", input_cif_path)
     io = PDBIO()
     io.set_structure(structure)
-    io.save(output_pdb)
+    io.save(output_pdb_path)
+    print(f"Converted: {input_cif_path} -> {output_pdb_path}")
 
-    print(f"Saved PDB file as: {output_pdb}")
 
 logging.basicConfig(level=logging.INFO)
 
@@ -71,15 +69,14 @@ for seed in range(1, 41):  # Seeds from 1 to 40
             if missing_files:
                 continue
             else:
-                # Rename and move PDB file
                 new_cif_name = f"model_{i+1}_seed_{seed-1}_chai1.cif"
                 shutil.copy(
                     os.path.join(input_dir, pdb_file),
                     os.path.join(output_dir, new_cif_name),
                 )
 
-                new_cif_name = f"model_{i+1}_seed_{seed-1}_chai1.pdb"
-                convert_pdb_to_cif(pdb_file,new_pdb_file)
+                new_pdb_file = f"model_{i+1}_seed_{seed-1}_chai1.pdb"
+                convert_cif_to_pdb(os.path.join(input_dir, pdb_file),os.path.join(output_dir, new_pdb_file))
 
                 # Add new keys from NPZ files
                 data = np.load(os.path.join(input_dir, scores_file))

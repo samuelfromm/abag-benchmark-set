@@ -30,7 +30,7 @@ if [[ -z "$PDBID" ]]; then
   exit 1
 fi
 
-RUNNAME="boltz"
+RUNNAME="chai1"
 
 BASEDIR="/proj/elofssonlab/users/x_safro/git/abag-benchmark-set/benchmarking-workflow"
 CONFIGFILE="$BASEDIR/config/config_ae_prebuilt.yaml"
