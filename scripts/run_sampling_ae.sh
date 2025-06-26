@@ -13,7 +13,7 @@ OUTPUT_CSV_PATH="/home/sfromm/git/abag-benchmark-set/results/sampling_scores_ae/
 MAX_SAMPLE_SIZE=200                   # Maximum sample size
 STEP_SIZE=1                          # Step size for incrementing sample sizes
 ITERATIONS=50                        # Number of iterations for averaging
-COLUMNS_TO_ANALYZE="abag_dockq ranking_confidence min_pmidockq TM_normalized_reference aetm aeitm ae_ranking_confidence max_per_chain_aeitm min_per_chain_aeitm mean_per_chain_aeitm paetm paeitm pae_ranking_confidence max_per_chain_paeitm min_per_chain_paeitm mean_per_chain_paeitm"  # Columns to analyze (space-separated)
+COLUMNS_TO_ANALYZE="abag_dockq ranking_confidence min_pmidockq TM_normalized_reference aetm aeitm ae_ranking_confidence max_per_chain_aeitm min_per_chain_aeitm mean_per_chain_aeitm paetm paeitm pae_ranking_confidence max_per_chain_paeitm min_per_chain_paeitm mean_per_chain_paeitm ptm iptm ranking_confidence"  # Columns to analyze (space-separated)
 REFERENCE_COLUMN="abag_dockq"         # Reference column to use for values
 
 

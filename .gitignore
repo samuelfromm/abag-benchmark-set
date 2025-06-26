@@ -11,3 +11,5 @@
 
 # Debgugging
 /logs
+
+/__pycache__/

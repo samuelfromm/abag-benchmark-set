@@ -1,5 +1,4 @@
 import torch
-import openfold.np.protein
 from typing import Optional
 
 
