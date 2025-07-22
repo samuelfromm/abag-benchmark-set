@@ -1,0 +1,15 @@
+
+
+
+# 
+/data/MSAs
+/data/models
+
+/benchmarking-workflow/output
+/benchmarking-workflow/config/old/
+/.snakemake
+
+# Debgugging
+/logs
+
+/__pycache__/

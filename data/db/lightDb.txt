@@ -1,0 +1,116 @@
+pdb ID,A chain(s),H chain(s),L chain(s)
+8wcg,A,C,NA
+8ysh,B,A,NA
+8zpb,A,B,NA
+9jbq,C,A,B
+8u3s,A,B,NA
+8w90,D,C,NA
+8z8v,A,B,NA
+8q6r,F,B,NA
+8q7o,C,A,NA
+8tbb,D,H,L
+8tuz,A,H,L
+8vyl,B | A,E,NA
+8k3a,A,B,NA
+8tg9,A,H,L
+9fzd,A,B,NA
+8av2,A,C,NA
+8k4q,C,D,NA
+8txm,B | A,H,L
+8jr3,E,B,C
+8pe1,B,D,NA
+8vk1,D,F,E
+8yj8,B,D,NA
+8jn4,C | E,H,L
+8r9z,A,B,C
+8wsn,D,B,C
+8t1g,D | C,G,I
+8qz3,B,C,NA
+8tnh,C,H,NA
+8k0d,A,E,F
+8tzu,B,C,NA
+8tfh,B,H,L
+8jg5,B,E,F
+8sic,G,H,L
+8v52,B,D,C
+8pij,A,B,NA
+8tq7,C,F,G
+8tnt,C,G,F
+8r4q,A,B,B
+8w0y,C,H,L
+8tbq,P,H,L
+8jyr,A,H,L
+8jeo,D,E,F
+8hbi,A,E,NA
+8x0t,A,H,L
+8ez3,A,H,L
+8opr,A,B,NA
+8hbj,C,E,NA
+8eln,A,C,NA
+8f5i,B,H,L
+8tp5,C,E,F
+8g0w,F,H,NA
+8h63,A,B,NA
+7zau,A,B,NA
+8awm,A,H,L
+8eay,A,H,L
+8ezl,A,H,H
+8b17,A,B,NA
+8c5h,S,N,NA
+7yv1,A,H,L
+8ol9,H,B,A
+8der,B,X,Y
+8pe9,A,H,L
+8e8y,1 | 2 | 3,H,L
+8ilx,A,C,NA
+8aok,A,B,NA
+8cz8,E,D,D
+8ejj,c,H,L
+7xjf,C,A,B
+8dwx,P,H,L
+8bf4,F,E,NA
+8gs9,A,H,K
+8euq,F | G,I,H
+8sbb,A,B,NA
+8say,F,H,I
+7uia,D,E,NA
+8f8w,F,G,NA
+8il3,C,B,A
+8en2,B,C,NA
+8f5n,A,H,L
+8df1,B,M,N
+7uxl,R,F,E
+8djg,F,A,B
+8hpk,A,H,L
+7x8t,A,C,B
+8hit,C,A,B
+7wvd,D | C,G,H
+7t82,A,D,C
+7ox2,M,D,E
+7ox4,C,A,B
+7usv,B,D,NA
+7wur,A,E,F
+8gsf,A | C,H,L
+7t0l,E | D,G,K
+7t17,C,J,K
+7unz,B,C,NA
+7pa5,A,B,NA
+7ubx,B,C,NA
+7s07,A,H,L
+7ugq,A,G,J
+7tgf,A,B,NA
+7uvf,A,H,L
+7s7i,B,I,M
+8e7m,A,H,L
+7zlk,D,H,L
+7upm,A,B,NA
+7sjn,B,D,E
+7q1u,A,B,NA
+7q6c,A,H,L
+7q0i,D,A,B
+7wvm,E,A,B
+7qu2,C,A,B
+7qia,A,B,NA
+7so5,A,H,L
+7qbe,A,E,NA
+7tzh,B,A,A

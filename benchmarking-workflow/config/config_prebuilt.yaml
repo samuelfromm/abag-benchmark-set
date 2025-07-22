@@ -1,0 +1,43 @@
+
+# Data
+#output_dir: "output"
+#samples_csv: "input/samples.csv"
+
+
+# Programs
+mmalign_path: "/proj/elofssonlab/users/x_safro/programs/MMalign"
+
+
+# Environments to use
+run_align_and_cut_env: "dockq_env"
+run_dockq_env: "dockq_env"
+run_pdockq2_env: "af_data_env"
+run_get_af_prediction_env: "af_data_env"
+
+
+keep-going: True
+use-conda: True
+
+# snakefile: snakeFile
+# latency-wait: 60
+# reason: True
+# show-failed-logs: True
+# keep-going: True
+# printshellcmds: True
+# # Cluster submission
+# jobname: "{rule}.{jobid}"              # Provide a custom name for the jobscript that is submitted to the cluster.
+# max-jobs-per-second: 1                 #Maximal number of cluster/drmaa jobs per second, default is 10, fractions allowed.
+# max-status-checks-per-second: 10       #Maximal number of job status checks per second, default is 10
+# jobs: 400                              #Use at most N CPU cluster/cloud jobs in parallel.
+# cluster: "sbatch --output=\"jobs/{rule}/slurm_%x_%j.out\" --error=\"jobs/{rule}/slurm_%x_%j.log\" --mem={resources.mem_mb} --time={resources.runtime}"
+# # Job resources
+# set-resources:
+#   - out_of_memory:mem_mb=50
+#   - out_of_memory:runtime=00:03:00
+# # For some reasons time needs quotes to be read by snakemake
+# default-resources:
+#   - mem_mb=500
+#   - runtime="00:01:00"
+# # Define the number of threads used by rules
+# set-threads:
+#   - out_of_memory=1
