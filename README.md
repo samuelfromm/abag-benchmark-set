@@ -16,8 +16,8 @@ For access to the remaining data, including the model files, etc., please refer 
 
 1. Deposit the model files under `data/models`.
 2. Depending on the output format of your files, you may need to rename them, e.g., run `scripts/rename_af3_files.py`.
-3. Create input files for the benchmarking workflow; see for example `scripts-tetralith/run_create_samples_per_id_af3.sh`.
-4. *(Optional)* Verify that the input files were correctly generated using `scripts-tetralith/check_scores_exist.sh`.
+3. Create input files for the benchmarking workflow; see for example `scripts-tetralith/create_samples_per_id_af3.sh`.
+4. Run `scripts-tetralith/check_scores_exist.sh`.
 5. Run the benchmarking workflow:
     - With aligned error analysis: `scripts-tetralith/calculate_scores_ae_per_id.sh`
     - Without aligned error analysis: `scripts-tetralith/calculate_scores_per_id.sh`

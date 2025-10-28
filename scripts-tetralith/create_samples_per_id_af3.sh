@@ -7,8 +7,8 @@ if [ -z "$1" ]; then
 fi
 # Set variables
 RUNNAME="$1"
-BASEDIR="/proj/elofssonlab/users/x_safro/git"
-OUTDIR="$BASEDIR/abag-benchmark-set/data/scores/$RUNNAME/input"
+BASEDIR="/proj/berzelius-2021-29/users/x_safro/git/paper"
+OUTDIR="$BASEDIR/abag-benchmark-set/data/scores_extra/$RUNNAME/input"
 NUMPREDICTIONS=40
 NUMSAMPLES=5
 DB_FILE="$BASEDIR/abag-benchmark-set/data/db/lightDb.txt"
