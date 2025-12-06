@@ -8,10 +8,11 @@ fi
 
 # Set variables
 RUNNAME="$1"
-BASEDIR="/proj/elofssonlab/users/x_safro/git"
+BASEDIR="/proj/berzelius-2021-29/users/x_safro/git/paper"
 OUTDIR="$BASEDIR/abag-benchmark-set/data/scores_paired/$RUNNAME/input"
-NUMPREDICTIONS=40
-NUMSAMPLES=5
+SOURCE_DIR="$BASEDIR/abag-benchmark-set/data/scores_ae/$RUNNAME/output"
+NUMPREDICTIONS=1 #40
+NUMSAMPLES=2 #5
 DB_FILE="$BASEDIR/abag-benchmark-set/data/db/lightDb.txt"
 MODELDIR="$BASEDIR/abag-benchmark-set/data/models"
 FILTERED_PDB_DIR="$BASEDIR/abag-benchmark-set/data/db/structures_filtered"
@@ -21,6 +22,9 @@ PDB_TEMPLATE="$MODELDIR/$RUNNAME/{ID}complex/model_seed_{PRED_NUM}_sample_{MODEL
 FEATURES_TEMPLATE="$MODELDIR/$RUNNAME/{ID}complex/full_confidences_seed_{PRED_NUM}_sample_{MODEL_NUM}_${RUNNAME}.json"
 DATA_TEMPLATE="$MODELDIR/$RUNNAME/{ID}complex/full_confidences_seed_{PRED_NUM}_sample_{MODEL_NUM}_${RUNNAME}.json"
 SAMPLE_ID_TEMPLATE="{ID}_seed_{PRED_NUM_REFERENCE}_sample_{MODEL_NUM_REFERENCE}_vs_seed_{PRED_NUM_QUERY}_sample_{MODEL_NUM_QUERY}_${RUNNAME}"
+SAMPLE_ID_TEMPLATE_SINGLE="{ID}_seed_{PRED_NUM}_sample_{MODEL_NUM}_${RUNNAME}"
+ABAG_PDB_TEMPLATE="$SOURCE_DIR/{ID}/{ID}_seed_{PRED_NUM}_sample_{MODEL_NUM}_${RUNNAME}/{ID}_seed_{PRED_NUM}_sample_{MODEL_NUM}_${RUNNAME}_query_abag_merged.cif"
+AE_TEMPLATE="$SOURCE_DIR/{ID}/{ID}_seed_{PRED_NUM}_sample_{MODEL_NUM}_${RUNNAME}/{ID}_seed_{PRED_NUM}_sample_{MODEL_NUM}_${RUNNAME}_aligned_error.pth"
 
 # Function to substitute variables in templates
 substitute_template() {
@@ -59,7 +63,7 @@ tail -n +2 "$DB_FILE" | while IFS=, read -r pdb_id chain_A chain_H chain_L; do
 
     # Initialize the output file
     > "$output_file"
-    echo "sample_id,pdbid,Achain,Hchain,Lchain,ground_truth_pdb,query_pdb,query_af_features,query_af_data,model_num_query,prediction_query,reference_pdb,reference_af_features,reference_af_data,model_num_reference,prediction_reference,preset" >> "$output_file"
+    echo "sample_id,sample_id_ref,sample_id_query,pdbid,Achain,Hchain,Lchain,ground_truth_pdb,query_pdb,query_af_features,query_af_data,model_num_query,prediction_query,reference_pdb,reference_af_features,reference_af_data,model_num_reference,prediction_reference,preset,query_pdb_abag,query_ae,reference_pdb_abag,reference_ae" >> "$output_file"
 
     # Process all combinations of models and samples
     for ((MODEL_NUM_REF = 1; MODEL_NUM_REF <= NUMSAMPLES; MODEL_NUM_REF++)); do
@@ -69,14 +73,22 @@ tail -n +2 "$DB_FILE" | while IFS=, read -r pdb_id chain_A chain_H chain_L; do
                     
                     # Generate dynamic values
                     SAMPLE_ID=$(substitute_sample_template "$SAMPLE_ID_TEMPLATE" "$pdb_id" "$MODEL_NUM_REF" "$PRED_NUM_REF" "$MODEL_NUM_QUERY" "$PRED_NUM_QUERY")
-                    
+                    SAMPLE_ID_REF=$(substitute_template "$SAMPLE_ID_TEMPLATE_SINGLE" "$pdb_id" "$MODEL_NUM_REF" "$PRED_NUM_REF")
+                    SAMPLE_ID_QUERY=$(substitute_template "$SAMPLE_ID_TEMPLATE_SINGLE" "$pdb_id" "$MODEL_NUM_QUERY" "$PRED_NUM_QUERY")
+
                     QUERY_PDB=$(substitute_template "$PDB_TEMPLATE" "$pdb_id" "$MODEL_NUM_QUERY" "$PRED_NUM_QUERY")
                     QUERY_DATA=$(substitute_template "$DATA_TEMPLATE" "$pdb_id" "$MODEL_NUM_QUERY" "$PRED_NUM_QUERY")
                     QUERY_FEATURES=$(substitute_template "$FEATURES_TEMPLATE" "$pdb_id" "$MODEL_NUM_QUERY" "$PRED_NUM_QUERY")
+                    QUERY_PDB_ABAG=$(substitute_template "$ABAG_PDB_TEMPLATE" "$pdb_id" "$MODEL_NUM_QUERY" "$PRED_NUM_QUERY")
+                    QUERY_AE=$(substitute_template "$AE_TEMPLATE" "$pdb_id" "$MODEL_NUM_QUERY" "$PRED_NUM_QUERY")
+
 
                     REF_PDB=$(substitute_template "$PDB_TEMPLATE" "$pdb_id" "$MODEL_NUM_REF" "$PRED_NUM_REF")
                     REF_DATA=$(substitute_template "$DATA_TEMPLATE" "$pdb_id" "$MODEL_NUM_REF" "$PRED_NUM_REF")
                     REF_FEATURES=$(substitute_template "$FEATURES_TEMPLATE" "$pdb_id" "$MODEL_NUM_REF" "$PRED_NUM_REF")
+                    REF_PDB_ABAG=$(substitute_template "$ABAG_PDB_TEMPLATE" "$pdb_id" "$MODEL_NUM_REF" "$PRED_NUM_REF")
+                    REF_AE=$(substitute_template "$AE_TEMPLATE" "$pdb_id" "$MODEL_NUM_REF" "$PRED_NUM_REF")
+
 
                     GROUND_TRUTH_PDB="$FILTERED_PDB_DIR/${pdb_id}_filtered.pdb"
 
@@ -96,7 +108,7 @@ tail -n +2 "$DB_FILE" | while IFS=, read -r pdb_id chain_A chain_H chain_L; do
                     fi
 
                     # Append the processed data to the output CSV file
-                    echo "${SAMPLE_ID},${pdb_id},${chain_A},${chain_H},${chain_L},${GROUND_TRUTH_PDB},${QUERY_PDB},${QUERY_FEATURES},${QUERY_DATA},${MODEL_NUM_QUERY},${PRED_NUM_QUERY},${REF_PDB},${REF_FEATURES},${REF_DATA},${MODEL_NUM_REF},${PRED_NUM_REF},${RUNNAME}" >> "$output_file"
+                    echo "${SAMPLE_ID},${SAMPLE_ID_REF},${SAMPLE_ID_QUERY},${pdb_id},${chain_A},${chain_H},${chain_L},${GROUND_TRUTH_PDB},${QUERY_PDB},${QUERY_FEATURES},${QUERY_DATA},${MODEL_NUM_QUERY},${PRED_NUM_QUERY},${REF_PDB},${REF_FEATURES},${REF_DATA},${MODEL_NUM_REF},${PRED_NUM_REF},${RUNNAME},${QUERY_PDB_ABAG},${QUERY_AE},${REF_PDB_ABAG},${REF_AE}" >> "$output_file"
                 done
             done
         done

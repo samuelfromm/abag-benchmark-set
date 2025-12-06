@@ -23,21 +23,33 @@ def main():
 
     df = pd.read_csv(args.abag_ipsae, delim_whitespace=True)
 
-    # Select the row where Type == "max"
-    row = df[df["Type"] == "max"]
+    # --- Select row where Type == "max" ---
+    row_max = df[df["Type"] == "max"].iloc[0].to_dict()
 
-    # Convert that single row to a dict
-    row_dict = row.iloc[0].to_dict()
-
-    output_data = {}
-    output_data["sample_id"] = sample_id
-
+    output_data = {"sample_id": sample_id}
     precision = 2
 
-    for key, value in row_dict.items():
-        if key in ["ipSAE", "ipSAE_d0chn" ,"ipSAE_d0dom",  "ipTM_d0chn"   ,  "pDockQ" ,    "pDockQ2"   , "LIS"]:
-            output_data[f"abag_{key}"] = round(value, precision)
+    # --- Extract max metrics ---
+    for key in ["ipSAE", "ipSAE_d0chn", "ipSAE_d0dom", "ipTM_d0chn", "pDockQ", "pDockQ2", "LIS"]:
+        if key in row_max:
+            val = row_max[key]
+            if isinstance(val, (int, float)):
+                val = round(val, precision)
+            output_data[f"abag_max_{key}"] = val
 
+    # --- Extract asym metrics ---
+    asym_rows = df[df["Type"] == "asym"].reset_index(drop=True)
+    if len(asym_rows) >= 2:
+        for i in range(2):
+            asym = asym_rows.iloc[i].to_dict()
+            for key in ["Chn1", "ipSAE", "ipSAE_d0chn", "ipSAE_d0dom", "ipTM_d0chn", "pDockQ", "pDockQ2", "LIS"]:
+                if key in asym:
+                    val = asym[key]
+                    if isinstance(val, (int, float)):
+                        val = round(val, precision)
+                    output_data[f"abag_asym_{i+1}_{key}"] = val
+    else:
+        print("Warning: fewer than 2 asym rows found!")
 
     # Save the output data to a CSV file
     output_df = pd.DataFrame([output_data])

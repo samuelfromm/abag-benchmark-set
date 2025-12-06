@@ -187,6 +187,27 @@ rule run_get_af_prediction:
         --output_csv {output[0]}
         """
 
+# Define the rule to run ANTIBODY-ANTIGEN ipsae
+rule run_prepare_abag_features:
+    input:
+        samples_csv,
+        query_pdb=lambda wildcards: get_sample_value(wildcards, 'query_pdb'),
+        af_data=lambda wildcards: get_sample_value(wildcards, 'query_af_data'),
+        alignment=output_dir+"/{sample_id}/{sample_id}_alignments.csv",
+    output:
+        query_abag_merged=output_dir+"/{sample_id}/{sample_id}_query_abag_merged.cif",
+    conda:
+        config["run_get_af_prediction_env"]
+    shell:
+        """
+        python scripts/run_prepare_abag_features.py \
+            --input_csv {input[0]} \
+            --alignment {input.alignment} \
+            --query_data {input.af_data} \
+            --query_pdb {input.query_pdb} \
+            --sample_id {wildcards.sample_id} \
+            --output_path {output.query_abag_merged}
+        """
 
 
 # Calculate aligned error
@@ -257,13 +278,14 @@ rule merge_scores:
         output_dir+"/{sample_id}/{sample_id}_af_prediction.csv",
         output_dir+"/{sample_id}/{sample_id}_aetm.csv",
         output_dir+"/{sample_id}/{sample_id}_pae_prediction.csv",
+        output_dir+"/{sample_id}/{sample_id}_query_abag_merged.cif", # force creation
     output:
         output_dir+"/{sample_id}/{sample_id}_merged.csv",
     run:
         import pandas as pd
         import functools
 
-        dataframes = [pd.read_csv(input[i]) for i in range(len(input))]
+        dataframes = [pd.read_csv(input[i]) for i in range(len(input)-1)] # -1 to not included force creation
 
         # Merge dataframes on column 'sample_id'
         merged_df = functools.reduce(
