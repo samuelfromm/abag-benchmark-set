@@ -2,7 +2,7 @@
 #SBATCH -A Berzelius-2025-214
 #SBATCH --output=/proj/berzelius-2021-29/users/x_safro/git/paper/logs/%A_%a.out
 #SBATCH --error=/proj/berzelius-2021-29/users/x_safro/git/paper/logs/%A_%a.err
-#SBATCH --array=1
+#SBATCH --array=1-34
 #SBATCH --cpus-per-task=8
 #SBATCH --partition=berzelius-cpu
 #SBATCH -t 12:00:00
