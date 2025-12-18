@@ -27,8 +27,11 @@ For access to the remaining data, including the model files, etc., please refer 
 3. Create input files for the benchmarking workflow; see for example `scripts-tetralith/create_samples_per_id_af3.sh`.
 4. Run `scripts-tetralith/check_scores_exist.sh`.
 5. Run the benchmarking workflow:
+    - Standard scoring workflow: `scripts-tetralith/calculate_scores_per_id.sh`
     - With aligned error analysis: `scripts-tetralith/calculate_scores_ae_per_id.sh`
-    - Without aligned error analysis: `scripts-tetralith/calculate_scores_per_id.sh`
+    - With ipSAE score: `scripts-tetralith/calculate_scores_extra_per_id.sh`
+    - Pairwise comparison between models: `scripts-tetralith/calculate_scores_paired_per_id.sh`
+
 6. Aggregate the results into a single file by running `scripts-tetralith/aggregate_scores_per_id.sh`.
 
 The Conda environment used to run the workflow is defined in `snakemake_env.yml`.
