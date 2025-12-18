@@ -4,3 +4,6 @@
 [submodule "modules/ColabFold"]
 	path = modules/ColabFold
 	url = https://github.com/sokrypton/ColabFold.git
+[submodule "modules/IPSAE"]
+	path = modules/IPSAE
+	url = https://github.com/DunbrackLab/IPSAE.git

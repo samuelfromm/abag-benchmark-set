@@ -4,10 +4,12 @@
 # 
 /data/MSAs
 /data/models
+/data/*/*/output
 
 /benchmarking-workflow/output
 /benchmarking-workflow/config/old/
 /.snakemake
+/benchmarking-workflow/.snakemake
 
 # Debgugging
 /logs

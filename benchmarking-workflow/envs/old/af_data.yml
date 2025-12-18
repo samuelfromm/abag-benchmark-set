@@ -1,0 +1,11 @@
+name: af_data_env
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python
+  - pip
+  - jax
+  - biopython
+  - pip:
+      - pkl
