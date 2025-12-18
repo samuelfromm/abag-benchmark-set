@@ -2,6 +2,14 @@
 
 This repository contains code used for the study ["Evaluating Deep Learning Based Structure Prediction Methods on Antibody-Antigen Complexes"](https://www.biorxiv.org/content/10.1101/2025.07.11.662141v1).
 
+# Data
+
+The folder `data/scores` contains CSV files with scores for each model from the study, separated by different runs. Similarly, `data/scores_ae` contains score files that include the aligned error (AE) analysis.
+
+The folders `results/sampling_scores` and `results/sampling_scores_ae` contain the results of the sampling analysis, with and without AE, respectively.
+
+For the complete dataset generated in the study, please refer to the article.
+
 # Usage
 
 To reproduce the results from the study or to apply the scoring pipeline to your own models, follow the instructions in the [Workflow](#workflow) section below.
@@ -38,7 +46,7 @@ abag-benchmark-set
 ├── README.md
 ├── analysis/                # Analysis scripts and notebooks
 ├── benchmarking-workflow/   # Snakemake workflow for generating benchmark metrics
-├── data/                    # Raw and processed input data. For the complete data please refer to the information in the article
+├── data/                    # Raw and processed input data. 
 ├── modules/                 # Submodules
 ├── results/                 # Output results from sampling analysis
 ├── scripts/                 # General-purpose scripts
